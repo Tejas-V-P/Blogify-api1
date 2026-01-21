@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const { getAllPosts } = require('../controllers/posts.controller');
+const postController = require('../controllers/posts.controller');
 
-router.get('/', getAllPosts);
+// IMPORTANT: static route first
+router.get('/', postController.getAllPosts);
+
+// Dynamic route AFTER '/'
+router.get('/:postId', postController.getPostById);
 
 module.exports = router;
