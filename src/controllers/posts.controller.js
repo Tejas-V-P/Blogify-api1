@@ -1,13 +1,20 @@
-// The Manager's Logic
-const getAllPosts = (req, res) => {
-  // A manager always returns a status code! 
-  // 200 means "OK/Success"
+// src/controllers/posts.controller.js
+
+const getPostById = (req, res) => {
+  // Step 2: Access the value using the key defined in the route
+  const { postId } = req.params; 
+
   res.status(200).json({
-    message: 'Route handled by postController.getAllPosts',
-    success: true
+    success: true,
+    message: `Post Office lookup successful!`,
+    data: {
+      requestedId: postId,
+      content: `This is the data for post ${postId}`
+    }
   });
 };
 
 module.exports = {
-  getAllPosts
+  // ... your other controllers (like getAllPosts)
+  getPostById,
 };
