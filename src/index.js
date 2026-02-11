@@ -1,19 +1,31 @@
-// Main entry point for the backend application
+require('dotenv').config();
 const express = require('express');
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+const cors = require('cors');
 
-// Middleware
+const {requestLogger, errorHandler} = require('./middleware')
+
+const mainRouter = require("./routes")
+
+const port = process.env.PORT || 3000;
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(requestLogger);
+app.use(cors());
 
-// Basic route
+
 app.get('/', (req, res) => {
-  res.json({ message: 'Backend server is running!' });
+   res.send('Welcome to Blogify Api');
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+
+
+app.use("/api/v1", mainRouter);
+
+
+app.use(errorHandler);
+
+
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });
