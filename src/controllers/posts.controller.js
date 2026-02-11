@@ -1,51 +1,24 @@
-const getAllPosts = (req, res) => {
-  const { sortBy } = req.query;
+// src/controllers/posts.controller.js
+const { validationResult } = require('express-validator');
 
-  let posts = [
-    { id: 1, title: "Hello World", date: "2024-01-01" },
-    { id: 2, title: "Learning Express", date: "2024-01-02" }
-  ];
-
-  if (sortBy === 'date') {
-    posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-  }
-
-  // Refactored to match "Blogify" standards
-  res.status(200).json({
-    success: true, // Boolean instead of string
-    message: 'All posts fetched successfully', // Added message per instructions
-    results: posts.length,
-    data: posts
-  });
-};
-
-const getPostById = (req, res) => {
-  const { postId } = req.params;
+const createPost = (req, res) => {
+  // Check the "Checklist" results
+  const errors = validationResult(req);
   
-  const posts = [
-    { id: 1, title: "Hello World", date: "2024-01-01" },
-    { id: 2, title: "Learning Express", date: "2024-01-02" }
-  ];
-
-  const post = posts.find(p => p.id === parseInt(postId));
-
-  if (!post) {
-    // Nesting the error message for a cleaner structure
-    return res.status(404).json({
-      success: false,
-      error: { 
-        message: 'Post not found' 
-      }
+  if (!errors.isEmpty()) {
+    // 400 Bad Request: The standard for "The client sent bad data"
+    return res.status(400).json({ 
+      errors: errors.array() 
     });
   }
 
-  res.status(200).json({
-    success: true,
-    data: post
+  // If we get here, the data is valid!
+  const { title, content } = req.body;
+  
+  res.status(201).json({
+    message: "Post created successfully",
+    data: { title, content }
   });
 };
 
-module.exports = {
-  getAllPosts,
-  getPostById
-};
+module.exports = { createPost };

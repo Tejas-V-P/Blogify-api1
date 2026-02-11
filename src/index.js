@@ -1,18 +1,31 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
-const PORT = 3000;
+const cors = require('cors');
 
-// Import the specialized department
-const postRouter = require('./routes/posts.routes.js');
+const {requestLogger, errorHandler} = require('./middleware')
 
-// Global Route
+const mainRouter = require("./routes")
+
+const port = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(requestLogger);
+app.use(cors());
+
+
 app.get('/', (req, res) => {
-  res.send('Welcome to the Blogify API!');
+   res.send('Welcome to Blogify Api');
 });
 
-// Route Delegation (Mounting)
-app.use('/api/v1/posts', postRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}/`);
+
+app.use("/api/v1", mainRouter);
+
+
+app.use(errorHandler);
+
+
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });
