@@ -2,12 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
+
 const app = express();
 const PORT = process.env.PORT || 1200;
 
 const{ requestLogger, errorHandler } = require('./middleware');
 const mainRouter = require('./routes');
 
+const connectDB = require('./config/db');
+
+// Connect to MongoDB
+connectDB();
 
 //Global middleware
 app.use(express.json());
