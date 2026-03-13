@@ -1,33 +1,99 @@
 // Mock posts data (adjust if your project already has a data source)
-const posts = [
-  {
-    id: '1',
-    title: 'First Post',
-    content: 'This is the first blog post'
-  },
-  {
-    id: '2',
-    title: 'Second Post',
-    content: 'This is the second blog post'
-  }
-];
+
+const postsService = require("../services/post.services");
+
 
 // GET /api/v1/posts
-exports.getAllPosts = (req, res) => {
-  res.status(200).json({
-    success: true,
-    data: posts
-  });
+const getAllPosts = async(req, res, next) => {
+  try{
+    const posts = await postsService.getAllPosts();
+    res.status(200).json({
+      success: true,
+      data: posts,
+    });
+    }
+    catch (error){
+      next(error);
+    }    
 };
 
 // GET /api/v1/posts/:postId
-exports.getPostById = (req, res) => {
-  const { postId } = req.params;
+const getPostById = async(req, res, next) => {
+  try{
+    const {postId} = req.params;
+    const post = await postsService.getPostById(postId);
 
-  const post = posts.find(p => p.id === postId);
-
-  res.status(200).json({
-    success: true,
-    data: post
-  });
+    if(!post){
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: post
+    });
+  }
+  catch (error){
+    next(error);
+  }
 };
+
+const createPost = async(req, res, next) => {
+  try{
+    const newPost = await postsService.createPost(req.body);
+    res.status(201).json({
+      success: true,
+      data: newPost
+    });
+  } catch(error){
+    next(error);
+  }
+};
+
+const updatePost = async(req, res, next)=>{
+  try{
+    const { postId } = req.params;
+    const updateData = req.body;
+    const updatedPost = await postsService.updatePost(postId, updateData);
+    if(!updatedPost){
+      return res.status(404).json({
+        success: false,
+        message: "Post not Found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: updatedPost,
+    });
+  }catch(error){
+    next(error);
+  }
+};
+
+const deletePost = async (req, res, next) => {
+  try{
+    const {postid} = req.params;
+    const deletedPost = await postsService.deletePost(postId);
+    if(!deletedPost){
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+   res.status(200).json({
+      success: true,
+      data: updatedPost,
+    });
+  } catch(error){
+    next(error);
+  }
+}
+
+module.exports = {
+  getAllPosts,
+  getPostById,
+  createPost,
+  updatePost,
+  deletePost
+}
