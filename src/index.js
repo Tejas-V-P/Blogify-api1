@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cookieParser = require('cookie-parser');
 const express = require('express');
 const cors = require('cors');
 
@@ -18,6 +19,7 @@ connectDB();
 app.use(express.json());
 app.use(requestLogger);
 app.use(cors());
+app.use(cookieParser());
 
 //main server
 app.get('/', (req, res) => {
